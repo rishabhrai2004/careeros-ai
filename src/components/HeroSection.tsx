@@ -27,12 +27,27 @@ const HeroSection = () => {
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-5xl sm:text-7xl lg:text-8xl font-bold leading-tight mb-8 tracking-tighter"
+          className="font-display text-5xl sm:text-7xl lg:text-9xl font-bold leading-tight mb-8 tracking-tighter"
         >
-          Master Your <span className="glow-text">Professional Destiny</span>
+          {["Master", "Your", "Professional", "Destiny"].map((word, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 100, rotateX: 45 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ 
+                duration: 1, 
+                delay: 0.4 + i * 0.1, 
+                ease: [0.16, 1, 0.3, 1] 
+              }}
+              className="inline-block mr-4 last:mr-0 origin-bottom"
+            >
+              {word === "Destiny" ? (
+                <span className="glow-text">{word}</span>
+              ) : (
+                word
+              )}
+            </motion.span>
+          ))}
         </motion.h1>
 
         <motion.p

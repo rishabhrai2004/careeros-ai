@@ -76,8 +76,13 @@ const metricCards = [
   },
 ] as const;
 
+import { fetchCareerIntelligence, type CareerIntelligence } from "@/lib/api/career-intelligence";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+
 const Builder = () => {
   const [values, setValues] = useState(initialValues);
+  const [simulateClicked, setSimulateClicked] = useState(false);
 
   const parsed = useMemo(() => formSchema.safeParse(values), [values]);
 
@@ -93,25 +98,32 @@ const Builder = () => {
     }, {});
   }, [parsed]);
 
-  const result = useMemo(() => {
-    const validation = formSchema.safeParse(values);
-    if (!validation.success) return null;
-
-    const simulationInput: CareerSimulationInput = {
-      currentRole: validation.data.currentRole,
-      targetRole: validation.data.targetRole,
-      yearsExperience: validation.data.yearsExperience,
-      country: validation.data.country,
-      currentSkills: validation.data.currentSkills,
-    };
-
-    return simulateCareerTransition(simulationInput);
-  }, [values]);
-
   const currentSkillList = useMemo(() => parseSkillsInput(values.currentSkills), [values.currentSkills]);
+
+  const { data: result, isLoading, error } = useQuery({
+    queryKey: ["career-simulation", values.targetRole, simulateClicked],
+    queryFn: async () => {
+      if (!parsed.success) {
+        toast.error("Please fill all required fields correctly.");
+        setSimulateClicked(false);
+        throw new Error("Validation failed");
+      }
+      toast.info("Analyzing your professional trajectory...", {
+        description: "Executing elite AI simulation patterns.",
+      });
+      return fetchCareerIntelligence(values.targetRole);
+    },
+    enabled: simulateClicked && !!values.targetRole,
+    staleTime: Infinity,
+  });
 
   const handleChange = (field: keyof typeof initialValues, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
+    if (simulateClicked) setSimulateClicked(false);
+  };
+
+  const handleSimulate = () => {
+    setSimulateClicked(true);
   };
 
   return (
@@ -241,13 +253,24 @@ const Builder = () => {
                 </div>
               </div>
 
-              <Button type="button" className="w-full btn-glow text-primary-foreground">
-                Results update automatically
+              <Button 
+                type="button" 
+                onClick={handleSimulate}
+                disabled={isLoading}
+                className="w-full btn-glow text-primary-foreground py-6 text-lg"
+              >
+                {isLoading ? "Executing Simulation..." : "Initialize Intelligence"}
               </Button>
             </section>
 
             <section className="space-y-6">
-              {result ? (
+              {isLoading ? (
+                <div className="glass-card p-12 text-center animate-pulse">
+                  <div className="w-12 h-12 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto mb-4" />
+                  <h3 className="font-display text-xl font-bold text-foreground">Analyzing Your Future</h3>
+                  <p className="text-muted-foreground mt-2">Connecting to elite career intelligence nodes...</p>
+                </div>
+              ) : result ? (
                 <>
                   <div className="glass-card p-6 lg:p-7 space-y-6">
                     <div className="flex flex-wrap items-start justify-between gap-4">

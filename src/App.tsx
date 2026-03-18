@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound.tsx";
 const queryClient = new QueryClient();
 
 import { useEffect } from "react";
+import SmoothScroll from "./components/SmoothScroll";
 
 const App = () => {
   useEffect(() => {
@@ -34,20 +35,22 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="custom-cursor" />
-        <div className="custom-cursor-outline" />
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/builder" element={<Builder />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/market-intelligence" element={<MarketIntelligence />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <SmoothScroll>
+          <div className="custom-cursor" />
+          <div className="custom-cursor-outline" />
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/builder" element={<Builder />} />
+              <Route path="/careers" element={<MarketIntelligence />} />
+              <Route path="/market-intelligence" element={<MarketIntelligence />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </SmoothScroll>
       </TooltipProvider>
     </QueryClientProvider>
   );
