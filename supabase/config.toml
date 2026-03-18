@@ -1,0 +1,10 @@
+project_id = "coicxxuxduxrvudlckto"
+
+[functions.firecrawl-scrape]
+verify_jwt = false
+
+[functions.firecrawl-search]
+verify_jwt = false
+
+[functions.career-intelligence]
+verify_jwt = false
